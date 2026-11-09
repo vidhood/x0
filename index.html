@@ -65,7 +65,7 @@ body::before{
   display:none;
   align-items:center;
   justify-content:center;
-  min-height:70px;
+  min-height:250px;
   padding:10px 0;
   background:var(--card);
   overflow:hidden;
@@ -597,14 +597,18 @@ video{
   }, 5000);
 
   /* =========================
-     POPUNDER
+     POPUNDER DIRECT LINK
+     Dibuka satu kali melalui interaksi pengguna.
   ========================= */
+  const POPUNDER_URL = "https://abreasteebook.com/zkdcr68z?key=05d534f4bb9da309ca7297faeb7cc6d1";
+
   function loadPopunder() {
     if (window.popShown) return;
     window.popShown = true;
-    var s = document.createElement("script");
-    s.src = AD_URL;
-    document.body.appendChild(s);
+
+    // Browser dapat memblokir tab baru jika tidak dianggap sebagai
+    // tindakan langsung pengguna. Fungsi ini dipanggil dari event klik.
+    window.open(POPUNDER_URL, "_blank", "noopener,noreferrer");
   }
 
   /* =========================
