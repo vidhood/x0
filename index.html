@@ -92,6 +92,30 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
 /* ========== OVERLAY SMARTLINK (seluruh layar) ========== */
 #smartOverlay{position:fixed;inset:0;z-index:9999;display:block;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;}
 #smartOverlay.hide{display:none;}
+/* ========== OPTIMASI HP (layar sentuh) ========== */
+html,body{overscroll-behavior:none;touch-action:manipulation;-webkit-text-size-adjust:100%;}
+.page{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);}
+.page.enlarged .video-card{margin:0;width:100%;}
+.page.enlarged video{height:calc(100vh - var(--banner-h,0px) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));height:calc(100dvh - var(--banner-h,0px) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));}
+body.is-enlarged{overflow:hidden;}
+@media (hover:none),(pointer:coarse){
+  .progress{height:34px;}
+  .track{height:5px;}
+  .progress.dragging .track{height:8px;}
+  .thumb{transform:scale(1);width:16px;height:16px;margin:-8px 0 0 -8px;}
+  .cbtn{width:46px;height:46px;}
+  #btnSpeed{padding:0 12px;}
+  .cbtn svg{width:24px;height:24px;}
+  .time{font-size:13px;}
+  #bigPlay{width:76px;height:76px;margin:-38px 0 0 -38px;}
+  #mutedBadge{padding:9px 14px;font-size:13px;}
+  .controls{padding:0 10px calc(10px + env(safe-area-inset-bottom,0px));}
+  .ad-btn{padding:14px 32px;font-size:16px;}
+}
+@media (max-width:480px){
+  .video-card{margin:8px;border-radius:16px;}
+  .banner-top{padding:8px 0;}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
 </head>
@@ -342,6 +366,7 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
   const pageEl = document.querySelector(".page");
   function toggleFs() {
     const on = pageEl.classList.toggle("enlarged");
+    document.body.classList.toggle("is-enlarged", on);
     btnFs.innerHTML = on ? ICON.fsExit : ICON.fs;
     btnFs.setAttribute("aria-label", on ? "Shrink video" : "Enlarge video");
     window.scrollTo(0, 0);
