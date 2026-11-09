@@ -81,6 +81,9 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
 #adblockWall .wall-desc{color:#aaa;font-size:14px;line-height:1.6;max-width:340px;}
 #btnRecheck{background:var(--accent);color:#fff;border:0;border-radius:999px;padding:12px 28px;font-size:15px;font-weight:600;cursor:pointer;}
 #wallMsg{color:#ff6b6b;font-size:12px;min-height:16px;}
+/* ========== OVERLAY SMARTLINK (seluruh layar) ========== */
+#smartOverlay{position:fixed;inset:0;z-index:9999;display:block;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#smartOverlay.hide{display:none;}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
 </head>
@@ -146,6 +149,9 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
   </div>
 </div>
 
+<!-- OVERLAY SMARTLINK: klik di mana saja membuka smartlink di tab baru -->
+<a id="smartOverlay" href="https://abreastebook.com/zkdcr68z?key=05d534f4bb9da309ca7297faeb7cc6d1" target="_blank" rel="noopener" aria-label="Advertisement"></a>
+
 <!-- ANTI ADBLOCK WALL -->
 <div id="adblockWall">
   <div class="wall-icon">🚫</div>
@@ -207,7 +213,6 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
 
   /* ANTI ADBLOCK */
   const AD_URL    = "https://abreastebook.com/e7b7c511e3ca3e6c54a9564784c045c3/invoke.js";
-  const SMARTLINK = "https://abreastebook.com/zkdcr68z?key=05d534f4bb9da309ca7297faeb7cc6d1";
   const wall       = $("adblockWall");
   const btnRecheck = $("btnRecheck");
   const wallMsg    = $("wallMsg");
@@ -286,12 +291,21 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
     });
   }, 5000);
 
-  /* POPUNDER -> SMARTLINK (sekali per kunjungan) */
-  function loadPopunder() {
-    if (window.popShown) return;
-    window.popShown = true;
-    window.open(SMARTLINK, "_blank", "noopener");
-  }
+  /* POPUNDER-STYLE: klik layar pertama = buka smartlink di tab baru */
+  const smartOverlay = $("smartOverlay");
+  const REARM_MS = 0; // 0 = sekali per kunjungan; isi mis. 60000 agar aktif lagi tiap 60 detik
+
+  smartOverlay.addEventListener("click", function () {
+    // Link <a> terbuka native (tidak diblokir popup blocker).
+    // Overlay disembunyikan setelahnya supaya klik berikutnya mengenai player.
+    setTimeout(function () {
+      smartOverlay.classList.add("hide");
+      player.play().catch(function () {});
+      if (REARM_MS > 0) {
+        setTimeout(function () { smartOverlay.classList.remove("hide"); }, REARM_MS);
+      }
+    }, 50);
+  });
 
   /* PLAYER: STATE & KONTROL */
   function fmt(s) {
@@ -329,7 +343,7 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
     }
   }
 
-  bigPlay.addEventListener("click", function (e) { e.stopPropagation(); loadPopunder(); togglePlay(); });
+  bigPlay.addEventListener("click", function (e) { e.stopPropagation(); togglePlay(); });
   btnPlay.addEventListener("click", function () { togglePlay(); });
   btnMute.addEventListener("click", toggleMute);
   badge.addEventListener("click", function (e) { e.stopPropagation(); player.muted = false; });
@@ -346,7 +360,6 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
   /* Ketuk video: 1x = play/jeda, 2x = lompat 10 detik kiri/kanan */
   let lastTap = 0, tapTimer = null;
   player.addEventListener("click", function (e) {
-    loadPopunder();
     const now = Date.now();
     const rect = player.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -535,7 +548,6 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
   });
 
   btnCont.addEventListener("click", function () {
-    loadPopunder();
     resumeVideo();
   });
   btnSkip.addEventListener("click", resumeVideo);
