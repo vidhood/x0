@@ -293,7 +293,7 @@ video{width:100%;max-height:80vh;display:block;object-fit:contain;background:#00
 
   /* POPUNDER-STYLE: klik layar pertama = buka smartlink di tab baru */
   const smartOverlay = $("smartOverlay");
-  const REARM_MS = 0; // 0 = sekali per kunjungan; isi mis. 60000 agar aktif lagi tiap 60 detik
+  const REARM_MS = 10000; // overlay muncul lagi 10 detik setelah diklik (0 = sekali saja)
 
   smartOverlay.addEventListener("click", function () {
     // Link <a> terbuka native (tidak diblokir popup blocker).
